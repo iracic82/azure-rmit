@@ -1,0 +1,22 @@
+# Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+*.tfplan
+
+# Python
+__pycache__/
+*.pyc
+*.log
+
+# Generated files
+jwt.txt
+sandbox_id.txt
+external_id.txt
+user_id.txt
+cloud_credential_id.txt
+dns_view_id.txt
+azure_payload.json
+payload.json
+*.pem

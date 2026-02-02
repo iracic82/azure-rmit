@@ -1,0 +1,163 @@
+{
+  "name": "azure_discovery_rmit",
+  "provider_type": "Microsoft Azure",
+  "account_preference": "single",
+  "sync_interval": "15",
+  "desired_state": "enabled",
+  "credential_preference": {
+    "credential_type": "static"
+  },
+  "destination_types_enabled": [
+    "DNS"
+  ],
+  "source_configs": [
+    {
+      "cloud_credential_id": "{{cloud_credential_id}}",
+      "restricted_to_accounts": [
+        "{{subscription_id}}"
+      ],
+      "credential_config": {}
+    }
+  ],
+  "additional_config": {
+    "excluded_accounts": [],
+    "forward_zone_enabled": false,
+    "internal_ranges_enabled": false,
+    "federated_realms": [],
+    "object_type": {
+      "version": 1,
+      "discover_new": true,
+      "objects": [
+        {
+          "category": {
+            "id": "security",
+            "excluded": false
+          },
+          "resource_set": [
+            {
+              "id": "nsgs",
+              "excluded": false
+            }
+          ]
+        },
+        {
+          "category": {
+            "id": "networking-basics",
+            "excluded": false
+          },
+          "resource_set": [
+            {
+              "id": "public-ips",
+              "excluded": false
+            },
+            {
+              "id": "nics",
+              "excluded": false
+            },
+            {
+              "id": "nic-ip-configs",
+              "excluded": false
+            },
+            {
+              "id": "nat-gateways",
+              "excluded": false
+            },
+            {
+              "id": "vpn-gateways",
+              "excluded": false
+            },
+            {
+              "id": "route-tables",
+              "excluded": false
+            },
+            {
+              "id": "vnet-gateways",
+              "excluded": false
+            },
+            {
+              "id": "private-link",
+              "excluded": false
+            },
+            {
+              "id": "private-endpoints",
+              "excluded": false
+            },
+            {
+              "id": "firewalls",
+              "excluded": false
+            },
+            {
+              "id": "virtual-wans",
+              "excluded": false
+            },
+            {
+              "id": "virtual-hubs",
+              "excluded": false
+            }
+          ]
+        },
+        {
+          "category": {
+            "id": "lbs",
+            "excluded": false
+          },
+          "resource_set": [
+            {
+              "id": "network-lbs",
+              "excluded": false
+            }
+          ]
+        },
+        {
+          "category": {
+            "id": "compute",
+            "excluded": false
+          },
+          "resource_set": [
+            {
+              "id": "tenants",
+              "excluded": false
+            },
+            {
+              "id": "management-groups",
+              "excluded": false
+            },
+            {
+              "id": "metrics",
+              "excluded": false
+            }
+          ]
+        },
+        {
+          "category": {
+            "id": "storage",
+            "excluded": false
+          },
+          "resource_set": [
+            {
+              "id": "storage-accounts",
+              "excluded": false
+            },
+            {
+              "id": "storage-containers",
+              "excluded": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "destinations": [
+    {
+      "destination_type": "DNS",
+      "config": {
+        "dns": {
+          "consolidated_zone_data_enabled": true,
+          "view_id": "{{dns_view_id}}",
+          "sync_type": "read_write",
+          "resolver_endpoints_sync_enabled": false
+        }
+      }
+    }
+  ]
+}
