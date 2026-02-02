@@ -61,7 +61,7 @@ variable "azure_private_ip" {
 variable "azure_vm_size" {
   description = "Azure VM size"
   type        = string
-  default     = "Standard_DS1_v2"
+  default     = "Standard_DS2_v2"
 }
 
 variable "user_data" {

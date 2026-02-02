@@ -121,6 +121,12 @@ variable "service_subnet_cidr" {
   default     = "10.201.1.0/24"
 }
 
+variable "service_vm_size" {
+  description = "Azure VM size for the spoke VM"
+  type        = string
+  default     = "Standard_DS2_v2"
+}
+
 variable "service_vm_private_ip" {
   description = "Static private IP for the spoke VM"
   type        = string
