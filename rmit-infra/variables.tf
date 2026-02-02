@@ -121,6 +121,12 @@ variable "service_subnet_cidr" {
   default     = "10.201.1.0/24"
 }
 
+variable "service_vm_private_ip" {
+  description = "Static private IP for the spoke VM"
+  type        = string
+  default     = "10.201.1.10"
+}
+
 variable "dns_zones" {
   description = "Private DNS zones to create"
   type        = list(string)

@@ -266,6 +266,79 @@ resource "azurerm_subnet_network_security_group_association" "service" {
   network_security_group_id = azurerm_network_security_group.service.id
 }
 
+# ─── Service VM (spoke workload) ─────────────────────────────────────────────
+
+resource "azurerm_public_ip" "service_vm" {
+  name                = "pip-${var.management_group}-${local.env_prefix}-${var.teenus}-vm"
+  location            = azurerm_resource_group.service.location
+  resource_group_name = azurerm_resource_group.service.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+  tags                = local.tags
+}
+
+resource "azurerm_network_interface" "service_vm" {
+  name                = "nic-${var.management_group}-${local.env_prefix}-${var.teenus}-vm"
+  location            = azurerm_resource_group.service.location
+  resource_group_name = azurerm_resource_group.service.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.service.id
+    private_ip_address_allocation = "Static"
+    private_ip_address            = var.service_vm_private_ip
+    public_ip_address_id          = azurerm_public_ip.service_vm.id
+  }
+
+  tags = local.tags
+}
+
+resource "azurerm_network_interface_security_group_association" "service_vm" {
+  network_interface_id      = azurerm_network_interface.service_vm.id
+  network_security_group_id = azurerm_network_security_group.service.id
+}
+
+resource "tls_private_key" "service_vm" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "local_sensitive_file" "service_vm_pem" {
+  content         = tls_private_key.service_vm.private_key_pem
+  filename        = "${path.root}/rmit-spoke-vm.pem"
+  file_permission = "0400"
+}
+
+resource "azurerm_linux_virtual_machine" "service_vm" {
+  name                  = "vm-${var.management_group}-${local.env_prefix}-${var.teenus}-spoke"
+  location              = azurerm_resource_group.service.location
+  resource_group_name   = azurerm_resource_group.service.name
+  size                  = "Standard_DS1_v2"
+  admin_username        = "azureuser"
+  network_interface_ids = [azurerm_network_interface.service_vm.id]
+
+  admin_ssh_key {
+    username   = "azureuser"
+    public_key = tls_private_key.service_vm.public_key_openssh
+  }
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts"
+    version   = "latest"
+  }
+
+  custom_data = base64encode(file("${path.module}/../terraform/templates/user-data.sh"))
+
+  tags = local.tags
+}
+
 # ─── Link Service VNet to DNS Zones (auto-registration on first zone) ────────
 
 resource "azurerm_private_dns_zone_virtual_network_link" "service" {

@@ -51,6 +51,23 @@ output "dns_zones" {
   value       = [for z in azurerm_private_dns_zone.this : z.name]
 }
 
+# --- Spoke VM ---
+
+output "spoke_vm_public_ip" {
+  description = "Spoke VM public IP"
+  value       = azurerm_public_ip.service_vm.ip_address
+}
+
+output "spoke_vm_private_ip" {
+  description = "Spoke VM private IP"
+  value       = var.service_vm_private_ip
+}
+
+output "spoke_vm_ssh_command" {
+  description = "SSH command to connect to the spoke VM"
+  value       = "ssh -o StrictHostKeyChecking=no -i rmit-spoke-vm.pem azureuser@${azurerm_public_ip.service_vm.ip_address}"
+}
+
 # --- Summary ---
 
 output "deployed_assets_summary" {
@@ -64,5 +81,6 @@ output "deployed_assets_summary" {
     dns_endpoints    = [azurerm_private_dns_resolver_inbound_endpoint.this.name, azurerm_private_dns_resolver_outbound_endpoint.this.name]
     dns_zones        = [for z in azurerm_private_dns_zone.this : z.name]
     network_watcher  = azurerm_network_watcher.this.name
+    spoke_vm         = azurerm_linux_virtual_machine.service_vm.name
   }
 }
